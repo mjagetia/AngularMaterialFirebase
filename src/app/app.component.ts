@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as firebase from 'firebase';
 import { firebaseKeys } from './firebase.config';
-
+import 'firebase/database';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -11,6 +11,10 @@ import { firebaseKeys } from './firebase.config';
 export class AppComponent implements OnInit {
 
   public ngOnInit(): void {
-    firebase.initializeApp(firebaseKeys);
+    console.log(firebaseKeys);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseKeys);
+      firebase.database.enableLogging(true);
+    }
   }
 }

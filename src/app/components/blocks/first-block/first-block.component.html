@@ -1,6 +1,1 @@
-<div id="contentOne">
-  <mat-card>
-      <h1>{{titleOne}}</h1>
-      <p>{{contentOne}}</p>
-  </mat-card>
-</div>
+<div id="contentOne">  <mat-card>    <h1 style="display: none">{{titleOne}}</h1>    <div>Welcome <span class="userName">{{userName}}</span>&nbsp;<span class="userId">{{userId}}</span></div>    <div>    <br/>    <span *ngFor="let punchType of punchTypes" class="punchTypes">      <button (click)="changeValue($event, punchType)" mat-raised-button [disabled]="punchType == myUser?.punchType">{{punchType}}</button>    </span>    </div>    <div>    <br/>    <pre>       Name: {{myUser?.displayName || userName }}      Punch: {{myUser?.punchType }}       Time: {{ myUser?.serverTimeJS }}</pre>    </div>    <div *ngIf="items$ | async; let items; else loading">      <ul>        <li *ngFor="let item of items">          {{ item.text }}        </li>      </ul>      <div *ngIf="items.length === 0">No results, try clearing filters</div>    </div>  </mat-card></div>

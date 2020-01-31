@@ -1,12 +1,213 @@
-import { Component } from '@angular/core';
+import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
+import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument} from '@angular/fire/firestore';
+import {Observable} from 'rxjs';
+// import * as firebase from 'firebase';
+import {AngularFireAuth} from '@angular/fire/auth';
+
+import {formatDate} from '@angular/common';
+import { CollectionReference, Query } from '@firebase/firestore-types';
+import * as firebase from 'firebase/app';
+import 'firebase/firestore';
+// import Timestamp = firebase.firestore.Timestamp;
+import { Timestamp } from '@firebase/firestore-types';
+
+export interface Item { Name: string; }
+
+export interface User {
+  punchType?: string;
+  currentState: string;
+  currentStateTime: Timestamp;
+  displayName: string;
+  localTime: Timestamp;
+  serverTime: Timestamp;
+  groups: any;
+  theString: string;
+  serverTimeJS?: Date;
+}
+
+export interface Group {
+  Name: string;
+  ParentGroup: string;
+  members: string[];
+}
+
+
+export interface PunchCardHistory {
+  IP: string;
+  userID: string;
+  time: Date;
+  serverTime: any;
+}
+
+export interface PunchCard {
+  IP: string;
+  userID: string;
+  time: Date;
+  serverTime: any;
+}
 
 @Component({
   selector: 'app-first-block',
   templateUrl: './first-block.component.html',
   styleUrls: ['./first-block.component.scss']
 })
-export class FirstBlockComponent {
-  titleOne = 'Starter kit';
-  contentOne = 'Angular 8 | Material Design | Firebase (OAuth authentication and NoSQL database)';
+export class FirstBlockComponent implements OnInit {
+  titleOne = 'Welcome to Hidden Talent :)';
+  contentOne = 'Punch In / Out';
+  punchType: string;
+  punchTypes = ['in', 'break-out', 'break-in', 'out'];
+  private itemsCollection: AngularFirestoreCollection<Item>;
+  private usersCollection: AngularFirestoreCollection<User>;
+
+  items: Observable<Item[]>;
+  users: Observable<User[]>;
+  private uid: string = '??';
+  private iname: string = 'Unavailable';
+  private user: Observable<User>;
+  private punchCard: Observable<PunchCard>;
+  private userId: string;
+  private userName: string;
+  private userDoc: AngularFirestoreDocument<User>;
+  private punchCardDoc: AngularFirestoreDocument<PunchCard>;
+  private groupDoc: AngularFirestoreDocument<Group>;
+  private group: Observable<Group>;
+  private myUser: User;
+  private myPunchCard: PunchCard;
+  curTime: any;
+  private items$: any;
+
+ /* transform(timestamp: Timestamp, format?: string): string {
+    return formatDate(timestamp.toDate(), format || 'medium', this.locale);
+  }*/
+
+  updateTime() {
+
+      this.curTime = new Date();
+      // console.log(this.curTime);
+      setTimeout( () => {
+        this.updateTime();
+      }, 1000);
+
+  }
+
+  constructor(@Inject(LOCALE_ID) private locale: string,
+              private afs: AngularFirestore, private afAuth: AngularFireAuth) {
+  }
+
+/*
+  clockIn(){
+    this.userDoc = afs.doc<Item>('user/david');
+    this.tasks = this.userDoc.collection<User>('Users/' + this.userId).valueChanges();
+  }
+*/
+
+public changeValue(event, punchType) {
+  console.log(event);
+  console.log(punchType);
+  this.myUser.currentState = '5';
+  this.punchType = punchType;
+  this.myUser.punchType = this.punchType;
+  this.myUser.localTime = firebase.firestore.Timestamp.fromDate(new Date('December 10, 1815'));
+  this.myUser.serverTime = firebase.firestore.FieldValue.serverTimestamp();
+  this.myUser.currentStateTime = firebase.firestore.FieldValue.serverTimestamp();
+
+  console.log(this.myUser);
+  this.userDoc.set(this.myUser, { merge: true });
+  //let punch = new Punch
+  // const newPunch = this.afs.collection('PunchCardHistory').doc();
+  // newPunch.set({uid: this.userId, time: firebase.firestore.FieldValue.serverTimestamp()});
+  const punchCardHistory = {
+    uid: this.userId,
+    time: firebase.firestore.FieldValue.serverTimestamp(),
+    punchType: this.punchType,
+    displayName: this.userName
+  };
+  this.afs.collection('PunchCardHistory').add(punchCardHistory);
+
+  //this.punchCardHistoryDoc = this.afs.doc<PunchCardHistory>('PunchCardHistory/' + this.userId + '');
+  // this.punchCard = this.punchCardDoc.valueChanges();
+  // this.punchCardDoc = this.afs.doc<PunchCard>('PunchCard/');
+  // this.punchCard = this.punchCardDoc.valueChanges();
+
+}
+
+
+  ngOnInit(): void {
+    this.curTime = new Date();
+    this.updateTime();
+    this.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.userId = user.uid;
+        this.userName = user.displayName;
+      }
+      // this.usersCollection = this.afs.collection<User>('Users');
+      // console.log(this.usersCollection);
+      this.userDoc = this.afs.doc<User>('Users/' + this.userId);
+      this.user = this.userDoc.valueChanges();
+
+      this.user.subscribe(user => {
+        console.log(user);
+        this.myUser = user;
+        if (user && user.serverTime) {
+          this.myUser.serverTimeJS = user.serverTime.toDate();
+        }
+        //this.myUser.theString = JSON.stringify(user);
+        }
+      );
+      // this.groupDoc = this.afs.doc<Group>('Groups/KbhWIJPjUcfjRtrxCAyP');
+      // this.group = this.groupDoc.valueChanges();
+
+
+
+      this.punchCardDoc = this.afs.doc<PunchCard>('PunchCard/' + this.userId);
+      this.punchCard = this.punchCardDoc.valueChanges();
+
+      this.punchCard.subscribe(punchCard => {
+          if (punchCard === undefined) {
+
+          // TODO open popup to create new account for first time punching
+
+          } else {
+            console.log(punchCard);
+            this.myPunchCard = punchCard;
+            this.myPunchCard.serverTime = firebase.firestore.FieldValue.serverTimestamp();
+            this.myPunchCard.time = new Date();
+
+
+/*
+            const this.items$ = this.afs.collection('PunchCardHistory', ref => {
+              let query : firebase.firestore.CollectionReference | firebase.firestore.Query = ref;
+               query = query.where("uid", "==", this.userId);
+              return query;
+            })
+              .valueChanges();
+              */
+/*
+            // Create a reference to the cities collection
+            var punchCardHistoryRef = this.afs.collection("PunchCardHistory");
+
+// Create a query against the collection.
+            var query = punchCardHistoryRef.where("uid", "==", this.userId)
+
+              .get()
+              .then(function(querySnapshot) {
+                querySnapshot.forEach(function(doc) {
+                  // doc.data() is never undefined for query doc snapshots
+                  console.log(doc.id, " => ", doc.data());
+                });
+              })
+              .catch(function(error) {
+                console.log("Error getting documents: ", error);
+              });*/
+
+          }
+        }
+      );
+
+
+
+    });
+
+  }
 
 }
