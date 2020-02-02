@@ -13,6 +13,7 @@ import { Timestamp } from '@firebase/firestore-types';
 import FieldValue = firebase.firestore.FieldValue;
 
 export interface Item { Name: string; }
+export interface PunchType { label: string; category: string; }
 
 export interface User {
   punchType?: string;
@@ -35,14 +36,16 @@ export interface Group {
 
 export interface PunchCardHistory {
   IP: string;
-  userID: string;
-  time: Date;
+  userId: string;
+  time: FieldValue | Date;
   serverTime: any;
+  type?: PunchType;
+  displayName?: string;
 }
 
 export interface PunchCard {
   IP: string;
-  userID: string;
+  userId: string;
   time: Date;
   serverTime: any;
 }
@@ -56,7 +59,12 @@ export class FirstBlockComponent implements OnInit {
   titleOne = 'Welcome to Hidden Talent :)';
   contentOne = 'Punch In / Out';
   punchType: string;
-  punchTypes = ['in', 'break-out', 'break-in', 'out'];
+  punchTypes: PunchType[] = [
+    {label: 'in', category: 'in'},
+    {label: 'break-out', category: 'out'},
+    {label: 'break-in', category: 'in'},
+    {label: 'out', category: 'out'}
+  ];
   private itemsCollection: AngularFirestoreCollection<Item>;
   private usersCollection: AngularFirestoreCollection<User>;
 
@@ -105,7 +113,7 @@ export class FirstBlockComponent implements OnInit {
     }
   */
 
-  public changeValue(event, punchType) {
+  public changeValue(event, punchType: PunchType) {
     console.log(event);
     console.log(punchType);
     this.myUser.currentState = '5';
@@ -120,11 +128,13 @@ export class FirstBlockComponent implements OnInit {
     // let punch = new Punch
     // const newPunch = this.afs.collection('PunchCardHistory').doc();
     // newPunch.set({uid: this.userId, time: firebase.firestore.FieldValue.serverTimestamp()});
-    const punchCardHistory = {
-      uid: this.userId,
+    const punchCardHistory: PunchCardHistory = {
+      IP: "",
+      serverTime: firebase.firestore.FieldValue.serverTimestamp(),
+      userId: this.userId,
       time: firebase.firestore.FieldValue.serverTimestamp(),
-      punchType: this.punchType,
-      displayName: this.userName
+      displayName: this.userName,
+      type: punchType
     };
     this.afs.collection('PunchCardHistory').add(punchCardHistory);
 
@@ -166,7 +176,7 @@ export class FirstBlockComponent implements OnInit {
           let myp;
           // ref.orderByChild("lastUpdatedTimestamp").startAt("1490187991");
           myp = this.afs.collection('PunchCardHistory',
-              ref => ref.where('uid', '==', this.userId)
+              ref => ref.where('userId', '==', this.userId)
                 // .startAt('2017-11-08T01:00:00+01:00')
                .where('time', '>', firebase.firestore.Timestamp.fromMillis(
                  Date.now() - (7 * 24 * 60 * 1000)))
