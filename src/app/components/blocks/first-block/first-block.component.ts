@@ -116,7 +116,7 @@ export class FirstBlockComponent implements OnInit {
   public changeValue(event, punchType: PunchType) {
     console.log(event);
     console.log(punchType);
-    this.myUser.currentState = '5';
+    // this.myUser.currentState = '5';
     this.punchType = punchType;
     this.myUser.punchType = this.punchType;
     this.myUser.localTime = firebase.firestore.Timestamp.fromDate(new Date('December 10, 1815'));
@@ -159,6 +159,8 @@ export class FirstBlockComponent implements OnInit {
         this.userDoc = this.afs.doc<User>('Users/' + this.userId);
         this.user = this.userDoc.valueChanges();
 
+        // First time user Need to be manually created in Users collection
+        // To have ONLY authorized users use the system.
         this.user.subscribe(user => {
           console.log(user);
           this.myUser = user;
@@ -178,8 +180,8 @@ export class FirstBlockComponent implements OnInit {
           myp = this.afs.collection('PunchCardHistory',
               ref => ref.where('userId', '==', this.userId)
                 // .startAt('2017-11-08T01:00:00+01:00')
-               .where('time', '>', firebase.firestore.Timestamp.fromMillis(
-                 Date.now() - (7 * 24 * 60 * 1000)))
+               // .where('time', '>', firebase.firestore.Timestamp.fromMillis(
+               //   Date.now() - (7 * 24 * 60 * 1000)))
                 .limit(3)
                .orderBy('time', 'desc')
                 );
