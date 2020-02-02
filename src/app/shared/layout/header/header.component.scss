@@ -17,7 +17,7 @@
 
 span a, span a:hover {
   text-decoration: none;
-  color:rgba(255,255,255,.87);
+  color:rgb(255,255,255);
 }
 
 mat-icon {
@@ -31,7 +31,12 @@ mat-icon {
   margin: 0 10px;
 }
 
-a, a:hover { 
+a.mat-menu-item .mat-icon, a.mat-menu-item:hover .mat-icon {
+  color:rgba(255,255,255,.87);
+  cursor: pointer;
+}
+
+a, a:hover {
   text-decoration: none;
   color:rgba(0,0,0,.87);
 }
@@ -43,7 +48,7 @@ a, a:hover {
 
 .login, .logout, .profile, .messages, .settings, .home, .about, .contact, .misc, .signup{
   color: #333;
-} 
+}
 
 // Sidenav
 .sidenav-content {

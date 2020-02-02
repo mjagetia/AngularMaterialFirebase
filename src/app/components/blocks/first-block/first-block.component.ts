@@ -77,6 +77,8 @@ export class FirstBlockComponent implements OnInit {
   curTime: any;
   private items$: any;
   private puchData: Observable<PunchCardHistory[]>;
+  private punchData: PunchCardHistory[];
+  private punchDataLatest: PunchCardHistory;
 
   /* transform(timestamp: Timestamp, format?: string): string {
      return formatDate(timestamp.toDate(), format || 'medium', this.locale);
@@ -173,7 +175,13 @@ export class FirstBlockComponent implements OnInit {
                 );
 
           this.puchData = myp.valueChanges();
-          console.log(myp);
+          this.puchData.subscribe(myp2 => {
+            console.log(myp2);
+            this.punchData = myp2;
+            if (myp2 && myp2.length>0) {
+              this.punchDataLatest = myp2[0];
+            }
+          });
 
           this.punchCardDoc = this.afs.doc<PunchCard>('PunchCard/' + this.userId);
           this.punchCard = this.punchCardDoc.valueChanges();
