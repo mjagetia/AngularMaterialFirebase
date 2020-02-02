@@ -17,6 +17,16 @@
   color: #0f4bac;
 }
 
+.userName::before{
+  content: '{';
+  color: gray;
+}
+
+.userName::after{
+  content: '}';
+  color: gray;
+}
+
 .userId{
   font-size: 10px;
   clor: silver;
