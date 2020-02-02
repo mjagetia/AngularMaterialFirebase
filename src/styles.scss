@@ -1,5 +1,15 @@
+$base-theme: random(4);
+
 /* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/deeppurple-amber';
+//@if($base-theme == 1) {
+  @import '~@angular/material/prebuilt-themes/indigo-pink';
+//} @else if ($base-theme == 2) {
+//  @import '~@angular/material/prebuilt-themes/indigo-pink';
+//} @else if ($base-theme == 3) {
+//  @import '~@angular/material/prebuilt-themes/pink-bluegrey';
+//} @else {
+//  @import '~@angular/material/prebuilt-themes/purple-green';
+//}
 
 body {
     background-color: #f7f7f7;

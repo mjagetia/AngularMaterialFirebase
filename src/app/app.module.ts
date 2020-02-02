@@ -31,7 +31,7 @@ import {
 // Main
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app.routing';
-import { firebaseKeys } from './firebase.config';
+import {firebaseConfig, firebaseKeys} from './firebase.config';
 
 // Pages
 import { HomeComponent } from './pages/home/home.component';
@@ -69,7 +69,7 @@ import { EmailMeComponent } from './components/email-me/email-me.component';
     BackgroundsModule,
     ProfileModule,
     MiscModule,
-    NgxAuthFirebaseUIModule.forRoot(firebaseKeys)
+    NgxAuthFirebaseUIModule.forRoot(firebaseKeys, null, firebaseConfig)
   ],
   providers: [
     UserService,

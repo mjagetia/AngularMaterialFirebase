@@ -21,7 +21,7 @@ export interface User {
   currentStateTime: FieldValue;
   displayName: string;
   localTime: Timestamp;
-  serverTime: Timestamp;
+  serverTime: Timestamp | FieldValue;
   groups: any;
   theString: string;
   serverTimeJS?: Date;
@@ -162,9 +162,9 @@ export class FirstBlockComponent implements OnInit {
         this.user.subscribe(user => {
           console.log(user);
           this.myUser = user;
-          if (user && user.serverTime && user.serverTime.seconds) {
-            this.myUser.serverTimeJS = new Date(user.serverTime.seconds);
-          }
+          // if (user && user.serverTime && user.serverTime.seconds) {
+          //   this.myUser.serverTimeJS = new Date(user.serverTime.seconds);
+          // }
           // this.myUser.theString = JSON.stringify(user);
           // this.groupDoc = this.afs.doc<Group>('Groups/KbhWIJPjUcfjRtrxCAyP');
           // this.group = this.groupDoc.valueChanges();

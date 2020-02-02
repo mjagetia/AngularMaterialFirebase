@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 
 import { AuthService } from '@shared';
+import {AuthProvider} from 'ngx-auth-firebaseui';
 
 @Component({
   selector: 'app-auth',
@@ -11,6 +12,8 @@ import { AuthService } from '@shared';
 export class AuthComponent {
 
   constructor(private authService: AuthService) {}
+
+  providers = AuthProvider;
 
   public onSuccess(): void {
     return this.authService.onSuccess();
