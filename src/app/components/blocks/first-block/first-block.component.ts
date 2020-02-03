@@ -16,7 +16,7 @@ export interface Item { Name: string; }
 export interface PunchType { label: string; category: string; }
 
 export interface User {
-  punchType?: string;
+  punchType?: PunchType;
   currentState: string;
   currentStateTime: FieldValue;
   displayName: string;
@@ -37,7 +37,7 @@ export interface Group {
 export interface PunchCardHistory {
   IP: string;
   userId: string;
-  time: FieldValue | Date;
+  time: any;
   serverTime: any;
   type?: PunchType;
   displayName?: string;
@@ -58,7 +58,7 @@ export interface PunchCard {
 export class FirstBlockComponent implements OnInit {
   titleOne = 'Welcome to Hidden Talent :)';
   contentOne = 'Punch In / Out';
-  punchType: string;
+  punchType: PunchType;
   punchTypes: PunchType[] = [
     {label: 'in', category: 'in'},
     {label: 'break-out', category: 'out'},
@@ -70,23 +70,23 @@ export class FirstBlockComponent implements OnInit {
 
   items: Observable<Item[]>;
   users: Observable<User[]>;
-  private uid = '??';
-  private iname = 'Unavailable';
-  private user: Observable<User>;
-  private punchCard: Observable<PunchCard>;
-  private userId: string;
-  private userName: string;
-  private userDoc: AngularFirestoreDocument<User>;
-  private punchCardDoc: AngularFirestoreDocument<PunchCard>;
-  private groupDoc: AngularFirestoreDocument<Group>;
-  private group: Observable<Group>;
-  private myUser: User;
-  private myPunchCard: PunchCard;
+  public uid = '??';
+  public iname = 'Unavailable';
+  public user: Observable<User>;
+  public punchCard: Observable<PunchCard>;
+  public userId: string;
+  public userName: string;
+  public userDoc: AngularFirestoreDocument<User>;
+  public punchCardDoc: AngularFirestoreDocument<PunchCard>;
+  public groupDoc: AngularFirestoreDocument<Group>;
+  public group: Observable<Group>;
+  public myUser: User;
+  public myPunchCard: PunchCard;
   curTime: any;
-  private items$: any;
-  private puchData: Observable<PunchCardHistory[]>;
-  private punchData: PunchCardHistory[];
-  private punchDataLatest: PunchCardHistory;
+  public items$: any;
+  public puchData: Observable<PunchCardHistory[]>;
+  public punchData: PunchCardHistory[];
+  public punchDataLatest: PunchCardHistory;
 
   /* transform(timestamp: Timestamp, format?: string): string {
      return formatDate(timestamp.toDate(), format || 'medium', this.locale);

@@ -24,7 +24,7 @@ const appRoutes: Routes = [
 
   // Public pages
   { path: '', redirectTo: '/home', pathMatch : 'full' },
-  { path: 'home', component: HomeComponent },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuardService] },
   { path: 'about', component: AboutMeComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'misc', component: MiscComponent },
