@@ -87,6 +87,7 @@ export class FirstBlockComponent implements OnInit {
   public puchData: Observable<PunchCardHistory[]>;
   public punchData: PunchCardHistory[];
   public punchDataLatest: PunchCardHistory;
+  public userProfilePhotoURL: string;
 
   /* transform(timestamp: Timestamp, format?: string): string {
      return formatDate(timestamp.toDate(), format || 'medium', this.locale);
@@ -153,6 +154,7 @@ export class FirstBlockComponent implements OnInit {
       if (user) {
         this.userId = user.uid;
         this.userName = user.displayName;
+        this.userProfilePhotoURL = user.photoURL;
 
         // this.usersCollection = this.afs.collection<User>('Users');
         // console.log(this.usersCollection);
@@ -182,7 +184,7 @@ export class FirstBlockComponent implements OnInit {
                 // .startAt('2017-11-08T01:00:00+01:00')
                // .where('time', '>', firebase.firestore.Timestamp.fromMillis(
                //   Date.now() - (7 * 24 * 60 * 1000)))
-                .limit(3)
+                .limit(6)
                .orderBy('time', 'desc')
                 );
 
