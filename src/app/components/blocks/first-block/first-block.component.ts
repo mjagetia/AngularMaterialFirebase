@@ -147,6 +147,9 @@ export class FirstBlockComponent implements OnInit {
   }
 
 
+  private _limit = 6;
+  public moderators: Observable<any[]>;
+
   ngOnInit(): void {
     this.curTime = new Date();
     this.updateTime();
@@ -174,6 +177,23 @@ export class FirstBlockComponent implements OnInit {
           // this.group = this.groupDoc.valueChanges();
 
 
+          const userRef = this.afs
+            .collection('Users')
+            .doc(this.userId).ref;
+          const files = this.afs
+            .collection('Groups', ref =>
+              ref.where('moderators', 'array-contains', userRef)
+            );
+
+
+          files.valueChanges()
+        .subscribe(data=>{
+            console.log(data);
+          });
+
+          this.moderators = files.valueChanges();
+
+
           const td = new Date();
           td.setDate(1);
           td.setHours(0, 0, 0, 0);
@@ -184,7 +204,7 @@ export class FirstBlockComponent implements OnInit {
                 // .startAt('2017-11-08T01:00:00+01:00')
                // .where('time', '>', firebase.firestore.Timestamp.fromMillis(
                //   Date.now() - (7 * 24 * 60 * 1000)))
-                .limit(6)
+                .limit(this._limit)
                .orderBy('time', 'desc')
                 );
 
