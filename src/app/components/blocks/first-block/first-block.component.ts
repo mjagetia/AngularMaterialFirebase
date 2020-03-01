@@ -3,64 +3,11 @@ import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, 
 import {Observable, of} from 'rxjs';
 // import * as firebase from 'firebase';
 import {AngularFireAuth} from '@angular/fire/auth';
-
-import {formatDate} from '@angular/common';
-import { CollectionReference, Query } from '@firebase/firestore-types';
+// import Timestamp = firebase.firestore.Timestamp;
 import * as firebase from 'firebase/app';
 import 'firebase/firestore';
-// import Timestamp = firebase.firestore.Timestamp;
-import { Timestamp } from '@firebase/firestore-types';
-import FieldValue = firebase.firestore.FieldValue;
+import {Group, Item, PunchCard, PunchCardGroupHistory, PunchCardHistory, PunchType, User} from './first-block.models';
 
-export interface Item { Name: string; }
-export interface PunchType { label: string; category: string; }
-
-export interface User {
-  punchType?: PunchType;
-  currentState: string;
-  currentStateTime: FieldValue;
-  displayName: string;
-  localTime: Timestamp;
-  serverTime: Timestamp | FieldValue;
-  groups: any;
-  theString: string;
-  serverTimeJS?: Date;
-  identity?: AngularFirestoreDocument<firebase.User>;
-}
-
-export interface Group {
-  Name: string;
-  ParentGroup: string;
-  membersl: string[];
-  members: [DocumentReference];
-}
-
-
-export interface PunchCardHistory {
-  IP: string;
-  userId: string;
-  time: any;
-  serverTime: any;
-  type?: PunchType;
-  displayName?: string;
-}
-
-
-export interface PunchCardGroupHistory {
-  user?: User;
-  identity?: Observable<firebase.User>;
-  identityValue?: any;
-  memberId?: string;
-  memberName?: string;
-  punchCardHistory?: Observable<PunchCardHistory[]>;
-}
-
-export interface PunchCard {
-  IP: string;
-  userId: string;
-  time: Date;
-  serverTime: any;
-}
 
 @Component({
   selector: 'app-first-block',
