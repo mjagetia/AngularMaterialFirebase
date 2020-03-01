@@ -44,6 +44,13 @@ export interface PunchCardHistory {
   displayName?: string;
 }
 
+
+export interface PunchCardGroupHistory {
+  memberId: string;
+  memberName: string;
+  punchCardHistory: Observable<PunchCardHistory[]>;
+}
+
 export interface PunchCard {
   IP: string;
   userId: string;
@@ -95,6 +102,7 @@ export class FirstBlockComponent implements OnInit {
   /* transform(timestamp: Timestamp, format?: string): string {
      return formatDate(timestamp.toDate(), format || 'medium', this.locale);
    }*/
+  public punchCardMember: PunchCardGroupHistory[];
 
   updateTime() {
 
@@ -201,32 +209,15 @@ export class FirstBlockComponent implements OnInit {
                 members =  data[i]['members'];
                 this.mem = Array();
                 this.puchDataMem = Array();
+                this.punchCardMember = Array();
                 for (let j=0; j< members.length; j++) {
                   console.log(members[j], "Member");
                   console.log("member ID", (<DocumentReference>members[j]).id);
-                  let mid;
-                  mid = (<DocumentReference>members[j]).id;
-/*
-
-                  // ref.orderByChild("lastUpdatedTimestamp").startAt("1490187991");
-                  let mypa1 = this.afs.collection('PunchCardHistory',
-                    ref => ref.where('userId', '==', mid)
-                      // .startAt('2017-11-08T01:00:00+01:00')
-                      // .where('time', '>', firebase.firestore.Timestamp.fromMillis(
-                      //   Date.now() - (7 * 24 * 60 * 1000)))
-                      .limit(this._limit)
-                      .orderBy('time', 'desc')
-                  );
-
-                  let puchData1 = mypa1.valueChanges();
-                  puchData1.subscribe(myp2 => {
-                    console.log(myp2);
-                    this.punchData = myp2;
-                    if (myp2 && myp2.length>0) {
-                      this.punchDataLatest = myp2[0];
-                    }
-                  });
-*/
+                  let mid = (<DocumentReference>members[j]).id;
+                  const pcgh: PunchCardGroupHistory = {
+                    'memberId': mid,
+                    'punchCardHistory': of([])
+                  };
 
                   let myp;
                   // ref.orderByChild("lastUpdatedTimestamp").startAt("1490187991");
@@ -239,8 +230,10 @@ export class FirstBlockComponent implements OnInit {
                       .orderBy('time', 'desc')
                   );
 
-                  this.puchDataMem.push(myp.valueChanges());
+                  pcgh.punchCardHistory = myp.valueChanges();
                   myp.valueChanges().subscribe(data => console.log("th data", data));
+
+                  this.punchCardMember.push(pcgh);
 
                   let m = (<DocumentReference>members[j]).get();
                     m.then( value => {
