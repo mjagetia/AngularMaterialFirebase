@@ -9,6 +9,7 @@ import { FirstBlockComponent } from './first-block/first-block.component';
 import { SecondBlockComponent } from './second-block/second-block.component';
 import { ThirdBlockComponent } from './third-block/third-block.component';
 import {FormsModule} from '@angular/forms';
+import {FlexModule} from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
@@ -17,10 +18,10 @@ import {FormsModule} from '@angular/forms';
     SecondBlockComponent,
     ThirdBlockComponent
   ],
-  imports: [
-    CommonModule,
-    MatButtonModule, MatCardModule, MatRadioModule, FormsModule
-  ],
+    imports: [
+        CommonModule,
+        MatButtonModule, MatCardModule, MatRadioModule, FormsModule, FlexModule
+    ],
   exports: [
     CardBlockComponent,
     FirstBlockComponent,

@@ -1,5 +1,5 @@
 #contentOne {
-  width: 930px;
+  /* width: 930px; */
   margin: 0 auto;
   left: 0;
   right: 0;
@@ -37,6 +37,19 @@
 .userId::after{
   content: ' ]';
 }
+
+.member-punch-history-box{
+  border: 1px solid #0f4bac;
+  padding: 4px;
+}
+
+.out{
+  color: darkorchid;
+}
+.in{
+  color: olive;
+}
+
 
 @media only screen and (max-width: 1024px) {
 
