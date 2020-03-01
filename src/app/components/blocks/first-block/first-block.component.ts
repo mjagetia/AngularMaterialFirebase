@@ -1,6 +1,6 @@
 import {Component, Inject, LOCALE_ID, OnInit} from '@angular/core';
-import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument} from '@angular/fire/firestore';
-import {Observable} from 'rxjs';
+import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentReference} from '@angular/fire/firestore';
+import {Observable, of} from 'rxjs';
 // import * as firebase from 'firebase';
 import {AngularFireAuth} from '@angular/fire/auth';
 
@@ -30,7 +30,8 @@ export interface User {
 export interface Group {
   Name: string;
   ParentGroup: string;
-  members: string[];
+  membersl: string[];
+  members: [DocumentReference];
 }
 
 
@@ -80,11 +81,13 @@ export class FirstBlockComponent implements OnInit {
   public punchCardDoc: AngularFirestoreDocument<PunchCard>;
   public groupDoc: AngularFirestoreDocument<Group>;
   public group: Observable<Group>;
+  public groups: Observable<Group[]>;
   public myUser: User;
   public myPunchCard: PunchCard;
   curTime: any;
   public items$: any;
   public puchData: Observable<PunchCardHistory[]>;
+  public puchDataMem: Observable<PunchCardHistory[]>[];
   public punchData: PunchCardHistory[];
   public punchDataLatest: PunchCardHistory;
   public userProfilePhotoURL: string;
@@ -149,6 +152,7 @@ export class FirstBlockComponent implements OnInit {
 
   private _limit = 6;
   public moderators: Observable<any[]>;
+  public mem: any[];
 
   ngOnInit(): void {
     this.curTime = new Date();
@@ -189,6 +193,73 @@ export class FirstBlockComponent implements OnInit {
           files.valueChanges()
         .subscribe(data=>{
             console.log(data);
+            if (data && data.length > 0) {
+              let lgroups = [];
+              for (let i =0; i< data.length; i++) {
+                lgroups.push(data[i]);
+                let members: [any];
+                members =  data[i]['members'];
+                this.mem = Array();
+                this.puchDataMem = Array();
+                for (let j=0; j< members.length; j++) {
+                  console.log(members[j], "Member");
+                  console.log("member ID", (<DocumentReference>members[j]).id);
+                  let mid;
+                  mid = (<DocumentReference>members[j]).id;
+/*
+
+                  // ref.orderByChild("lastUpdatedTimestamp").startAt("1490187991");
+                  let mypa1 = this.afs.collection('PunchCardHistory',
+                    ref => ref.where('userId', '==', mid)
+                      // .startAt('2017-11-08T01:00:00+01:00')
+                      // .where('time', '>', firebase.firestore.Timestamp.fromMillis(
+                      //   Date.now() - (7 * 24 * 60 * 1000)))
+                      .limit(this._limit)
+                      .orderBy('time', 'desc')
+                  );
+
+                  let puchData1 = mypa1.valueChanges();
+                  puchData1.subscribe(myp2 => {
+                    console.log(myp2);
+                    this.punchData = myp2;
+                    if (myp2 && myp2.length>0) {
+                      this.punchDataLatest = myp2[0];
+                    }
+                  });
+*/
+
+                  let myp;
+                  // ref.orderByChild("lastUpdatedTimestamp").startAt("1490187991");
+                  myp = this.afs.collection('PunchCardHistory',
+                    ref => ref.where('userId', '==', mid)
+                      // .startAt('2017-11-08T01:00:00+01:00')
+                      // .where('time', '>', firebase.firestore.Timestamp.fromMillis(
+                      //   Date.now() - (7 * 24 * 60 * 1000)))
+                      .limit(this._limit)
+                      .orderBy('time', 'desc')
+                  );
+
+                  this.puchDataMem.push(myp.valueChanges());
+                  myp.valueChanges().subscribe(data => console.log("th data", data));
+
+                  let m = (<DocumentReference>members[j]).get();
+                    m.then( value => {
+                      console.log(value.data());
+                      this.mem.push(value.data());
+                    }
+                  );
+                }
+              }
+              this.groups = of(lgroups);
+
+
+
+              /*
+                              for (let m in group.members) {
+                                group.members[m]
+                              }*/
+              }
+
           });
 
           this.moderators = files.valueChanges();
@@ -211,7 +282,7 @@ export class FirstBlockComponent implements OnInit {
           this.puchData = myp.valueChanges();
           this.puchData.subscribe(myp2 => {
             console.log(myp2);
-            this.punchData = myp2;
+            // this.punchData = myp2;
             if (myp2 && myp2.length>0) {
               this.punchDataLatest = myp2[0];
             }
