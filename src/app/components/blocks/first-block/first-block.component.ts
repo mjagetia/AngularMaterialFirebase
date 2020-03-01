@@ -25,6 +25,7 @@ export interface User {
   groups: any;
   theString: string;
   serverTimeJS?: Date;
+  identity?: AngularFirestoreDocument<firebase.User>;
 }
 
 export interface Group {
@@ -46,9 +47,12 @@ export interface PunchCardHistory {
 
 
 export interface PunchCardGroupHistory {
-  memberId: string;
-  memberName: string;
-  punchCardHistory: Observable<PunchCardHistory[]>;
+  user?: User;
+  identity?: Observable<firebase.User>;
+  identityValue?: any;
+  memberId?: string;
+  memberName?: string;
+  punchCardHistory?: Observable<PunchCardHistory[]>;
 }
 
 export interface PunchCard {
@@ -214,10 +218,17 @@ export class FirstBlockComponent implements OnInit {
                   console.log(members[j], "Member");
                   console.log("member ID", (<DocumentReference>members[j]).id);
                   let mid = (<DocumentReference>members[j]).id;
-                  const pcgh: PunchCardGroupHistory = {
+                  let pcgh: PunchCardGroupHistory = {
                     'memberId': mid,
                     'punchCardHistory': of([])
                   };
+
+                  let userDoc2 = this.afs.doc<User>('Users/' + mid);
+                  let userDoc1 = this.afs.doc<firebase.User>('users/' + mid);
+                  pcgh.identity = userDoc1.valueChanges();
+                  userDoc1.valueChanges().subscribe(value => {
+                     pcgh.identityValue = value;
+                  });
 
                   let myp;
                   // ref.orderByChild("lastUpdatedTimestamp").startAt("1490187991");
